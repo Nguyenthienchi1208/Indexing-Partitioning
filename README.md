@@ -6,25 +6,38 @@ Optimize analytical SQL queries on large-scale e-commerce datasets using **Parti
 
 # Demo
 
-
+1. Before
 ```sql
 EXPLAIN (ANALYZE, BUFFERS)
 SELECT
-    oi.order_id,
-    o.order_date,
-    SUM(oi.quantity * oi.unit_price) AS total_revenue
-FROM orders o
-JOIN order_items oi
-    ON o.order_id = oi.order_id
-   AND o.order_date = oi.order_date
-WHERE o.order_date >= DATE '2025-08-01'
-  AND o.order_date <  DATE '2025-09-01'
-  AND oi.order_date >= DATE '2025-08-01'
-  AND oi.order_date <  DATE '2025-09-01'
-GROUP BY oi.order_id, o.order_date
-ORDER BY total_revenue DESC;
+    order_item_id,
+    order_id,
+    product_id,
+    order_date,
+    quantity,
+    unit_price,
+    subtotal
+FROM orders_items_backup
+WHERE order_date >= '2025-08-01'
+  AND order_date < '2025-09-01'
+  AND product_id = 37;
 ```
-
+2. After
+```sql
+EXPLAIN (ANALYZE, BUFFERS)
+SELECT
+    order_item_id,
+    order_id,
+    product_id,
+    order_date,
+    quantity,
+    unit_price,
+    subtotal
+FROM order_items
+WHERE order_date >= '2025-08-01'
+  AND order_date < '2025-09-01'
+  AND product_id = 37;
+```
 # Overview
 
 This project investigates how PostgreSQL query performance changes after applying:
