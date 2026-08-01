@@ -70,7 +70,7 @@ Generated using Python **faker**
 
 ---
 
-# Database Design
+# Table design
 
 ## Main Tables
 
