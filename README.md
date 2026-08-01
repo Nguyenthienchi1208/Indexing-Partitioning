@@ -7,9 +7,23 @@ Optimize analytical SQL queries on large-scale e-commerce datasets using **Parti
 # Demo
 
 <p align="center">
-
-(GIF chạy query hoặc EXPLAIN ANALYZE)
-
+```sql
+EXPLAIN(ANALYZE, BUFFERS)
+SELECT 
+    oi.order_id, 
+    o.order_date, 
+    SUM(oi.quantity * oi.unit_price) AS Total_Revenue
+FROM orders o 
+JOIN order_items oi 
+    ON o.order_id = oi.order_id 
+    AND o.order_date = oi.order_date
+WHERE o.order_date >= '2025-08-01' 
+	AND o.order_date < '2025-09-01'
+	AND oi.order_date >= '2025-08-01' 
+	AND oi.order_date < '2025-09-01'
+GROUP BY oi.order_id, o.order_date
+ORDER BY Total_Revenue DESC;
+```
 </p>
 
 ---
@@ -41,23 +55,8 @@ Generated using Python **faker**
 | Table | Rows |
 |-------|------:|
 | orders | ~2.5M |
-| order_items | ~8M |
+| order_items | ~10M |
 
-Relationship
-
-```
-1 Order
-   │
-   ├── Order Item
-   ├── Order Item
-   └── Order Item
-```
-
-Business rules
-
-- Each order contains 2–4 products.
-- `orders.total_amount = SUM(order_items.subtotal)`
-- Realistic order status distribution.
 
 ---
 
