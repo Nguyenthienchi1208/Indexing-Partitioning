@@ -8,7 +8,7 @@ Optimize analytical SQL queries on large-scale e-commerce datasets using **Parti
 
 <p align="center">
 ```sql
-EXPLAIN(ANALYZE, BUFFERS)
+	EXPLAIN(ANALYZE, BUFFERS)
 SELECT 
     oi.order_id, 
     o.order_date, 
