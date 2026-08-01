@@ -6,27 +6,24 @@ Optimize analytical SQL queries on large-scale e-commerce datasets using **Parti
 
 # Demo
 
-<p align="center">
-```sql
-	EXPLAIN(ANALYZE, BUFFERS)
-SELECT 
-    oi.order_id, 
-    o.order_date, 
-    SUM(oi.quantity * oi.unit_price) AS Total_Revenue
-FROM orders o 
-JOIN order_items oi 
-    ON o.order_id = oi.order_id 
-    AND o.order_date = oi.order_date
-WHERE o.order_date >= '2025-08-01' 
-	AND o.order_date < '2025-09-01'
-	AND oi.order_date >= '2025-08-01' 
-	AND oi.order_date < '2025-09-01'
-GROUP BY oi.order_id, o.order_date
-ORDER BY Total_Revenue DESC;
-```
-</p>
 
----
+```sql
+EXPLAIN (ANALYZE, BUFFERS)
+SELECT
+    oi.order_id,
+    o.order_date,
+    SUM(oi.quantity * oi.unit_price) AS total_revenue
+FROM orders o
+JOIN order_items oi
+    ON o.order_id = oi.order_id
+   AND o.order_date = oi.order_date
+WHERE o.order_date >= DATE '2025-08-01'
+  AND o.order_date <  DATE '2025-09-01'
+  AND oi.order_date >= DATE '2025-08-01'
+  AND oi.order_date <  DATE '2025-09-01'
+GROUP BY oi.order_id, o.order_date
+ORDER BY total_revenue DESC;
+```
 
 # Overview
 
@@ -87,27 +84,7 @@ Generated using Python **faker**
 ---
 
 # Optimization
-
-## Before
-
-```
-orders_backup
-orders_items_backup
-```
-
-Large heap tables
-
-↓
-
-Sequential Scan
-
-↓
-
-Millions of rows scanned
-
----
-
-## After
+## Apply Range Partitioning
 
 ```
 orders
@@ -123,24 +100,11 @@ order_items
 └── order_items_2025_11
 ```
 
-### Partition Strategy
-
-Range Partitioning
+## Indexes
 
 ```
-order_date
-```
-
-### Indexes
-
-```
-PRIMARY KEY(order_id)
-
 INDEX(product_id)
 
-INDEX(order_date)
-
-INDEX(order_id, order_date)
 ```
 
 ---
@@ -223,25 +187,7 @@ INDEX(order_id, order_date)
 
 ---
 
-# Project Structure
-
-```
-.
-├── data_generator/
-├── sql/
-│   ├── schema.sql
-│   ├── indexes.sql
-│   ├── partitions.sql
-│   ├── benchmark.sql
-│   └── explain_queries.sql
-├── notebooks/
-├── images/
-└── README.md
-```
-
----
-
-# Key Takeaways
+# Key
 
 Applying **Partitioning** and **Indexing** significantly improved analytical query performance by:
 
